@@ -7,7 +7,7 @@ conf = SparkConf().setMaster("local").setAppName("uber-date-trips")
 sc = SparkContext(conf=conf)
 
 # 우리가 가져올 데이터가 있는 파일
-directory = "/Users/keon/fastcampus/data-engineering/01-spark/data"
+directory = "/Users/sion/Workspace/data-engineering/01-spark/data"
 filename = "fhvhv_tripdata_2020-03.csv"
 
 # 데이터 파싱
@@ -23,3 +23,6 @@ result = dates.countByValue()
 # 아래는 Spark코드가 아닌 일반적인 파이썬 코드
 # CSV로 결과값 저장 
 pd.Series(result, name="trips").to_csv("trips_date.csv")
+
+# 위코드 실행 방법
+## spark-submit count_trips.py
