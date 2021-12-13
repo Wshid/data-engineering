@@ -82,3 +82,74 @@ Requirement already satisfied: six>=1.5 in /Users/sion/opt/anaconda3/lib/python3
   ```
 - interactive window에서 `visualize_trips_date.py` 수행 결과
   - ![image](https://user-images.githubusercontent.com/10006290/145673418-3ba01258-e1dd-4a37-8e81-8cc57d853abf.png)
+
+
+## CH01_05. Spark에 대해 알아보자
+- HDFS: 파일 시스템
+- Map Reduce: 연산 엔진
+  - **Spark**
+- Yarn: 리소스 관리
+- 고속 = 빅데이터의 In-memory 연산
+- Cluster Manager
+  - Hadoop - Yarn
+  - AWS - Elastic MapReduce
+- Spark의 성능
+  - Hadoop MR보다 빠름
+    - 메모리상 100배
+    - 디스크상 10배
+  - Lazy Evaluation
+    - 실행이 필요할때까지 기다림
+
+## CH01_06. Spark는 어떻게 진화하고 있을까
+- spark 1,2,3동안 어떻게 변했는지
+- Spark 1.x
+  - Dataframe(v1.3)
+- Spark 2.x
+  - Structured Streaming
+  - Catalyst Optimizer Project: 언어에 상관없이 동일한 성능
+- Spark 3.x
+  - Spark SQL 기능 추가
+  - Spark 2.4보다 2배 빠른 성능
+    - Adaptive execution
+    - Dynamic partition pruning
+  - DL
+    - GPU 노드 지원
+    - ML Framework 연계 가능
+  - GraphX
+  - python2 deprecated
+  - k8s 지원 강화
+- Spark의 현재 구성
+  - Spark Core, Spark SQL, Spark Streaming, MLlib, GraphX
+
+## CH01_07. RDD
+- Resilient Distributed DataSet(RDD)
+
+### RDD의 특징
+- 데이터는 클러스터에 흩어져있으나, 하나의 파일인것처럼 사용 가능
+  - `lines = sc.textFile(...)`
+- 탄력적이고 불변
+  - 네트워크 장애, HW/MEM 장애, 여러가지 이유..
+  - 데이터가 Immutable하다면 동적 대응 가능
+  - RDD1이 변환되면 RDD2가 새로 생성
+    - 변환을 거치면서 연산을 기록할 수 있음
+  - **RDD의 변환과정**은 **Acyclic Graph**로 그릴 수 있음
+    - 문제가 발생했을 경우, 쉽게 전 RDD로 돌아갈 수 있음
+  - 이를 탄력적이라고 함
+- Type-Safe
+  - Compile time에 검증 가능
+- Unstructured/Structured
+  - Unstructured: 텍스트 데이터, 로그, 자연어, ...
+  - Structured: RDB, DataFrame, ...
+- Lazy
+  - 결과가 필요할때까지 연산을 하지 않음
+  - T(Transformation), A(Action)
+    - Action까지 T를 실행하지 않음
+
+### RDD를 쓰는 이유
+- 유연, 짧은 코드
+- 개발시, **무엇**보다는 **어떻게**(how-to)에 초점
+
+## CH01_08. 코드 한줄씩 파헤치기
+```bash
+pip install jupyter
+```
