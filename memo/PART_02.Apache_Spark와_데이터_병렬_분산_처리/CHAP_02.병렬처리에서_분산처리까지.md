@@ -62,3 +62,24 @@
 - `key`를 변경하지 않는다면 `mapValues`를 사용하기
   - `Spark`내부에서 **파티션을 유지**하기 때문에 더 효율적
   - `mapValues()`, `flatMapValues()`
+
+## CH02_04. RDD Transformations and Actions
+- **Transformations**
+  - 결과값으로 **새로운 RDD** 반환
+  - Lazy Evaluation
+- **Actions**
+  - 결과값을 연산하여 출력하거나 저장
+  - list, python object
+  - Eager Execution(즉시 실행)
+
+### Narrow Transformation
+- 1:1변환
+- `filter, map, flatMap, sample, union`
+- 1열을 조작하기 위해 **다른 열/파티션**의 데이터를 쓸 필요가 없음
+- 정렬이 필요하지 않은 경우
+
+### Wide Transformation
+- Shuffling
+- Intersection, join, distinct, cartesian, reduceByKey, groupByKey
+- 아웃풋 RDD의 파티션에 다른 파티션의 데이터가 들어갈 수 있음
+- 최소화, 최적화 해야 좋은 성능
