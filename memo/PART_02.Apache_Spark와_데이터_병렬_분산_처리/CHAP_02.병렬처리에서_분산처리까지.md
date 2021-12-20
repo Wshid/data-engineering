@@ -124,3 +124,79 @@
 - Spark는 데이터가 여러곳에 분산되며, 같은 연산이어도 여러 노드에서 수행
 - Driver - Cluster Manager - Worker
 - 실제 코드가 어디서 구동될지, 생각을 하면서 코딩해야함
+
+## CH02_07. Reduction Operations
+- Reduction
+  - 요소들을 모서 하로 합치는 작업
+  - 많은 Spark의 연산들이 reduction
+  - **근접하는 요소들을 모아서 하나의 결과로 나타내는 것**
+- Action은 어떻게 분산된 환경에서 동작할지?
+- 병렬 처리가 가능한 경우
+  - Parallel Reduction
+  - 파티션별로 독립적으로 처리가 가능해야함
+  - 순서대로 처리하지 않아도 됨
+- 대표적인 Reduction Actions  
+  - `Reduce, Fold, GroupBy, Aggregate`
+
+#### Reduce
+```python
+sc.parallelize([1,2,3,4,5]).reduce(add)
+# 15
+```
+- 분산된 파티션들의 연산과, 합치는 부분을 나누어 생각해야 함
+  ```scala
+  // 26, 2+2 =4, (4,3) => 8+3 = (11,4), 22 + 4 = 26
+  sc.parallelize([1,2,3,4],1).reduce(lambda x,y: (x*2)+y)
+  // 18 (4, 10) => 8 + 10 = 18
+  sc.parallelize([1,2,3,4],2).reduce(lambda x,y: (x*2)+y)
+  ```
+- 연산의 순서와 상관 없이 결과를 보장하려면 
+  - **교환 법칙**과 **결합 법칙**을 고려해야 함
+
+#### Fold
+```python
+# RDD.fold(zeroValue, <func>)
+sc.parallelize([1,2,3,4,5]).fold(0, add)
+```
+- 파티션에 따라 헷갈리는 경우 존재
+  ```python
+  rdd = sc.parallelize([2,3,4], 4)
+  # 24
+  rdd.reduce(lambda x,y: x*y)
+  # 24
+  rdd.fold(1, lambda x,y: x*y)
+
+
+  # 9
+  rdd.reduce(lambda x, y: x+y)
+  # 14, (1+1) + (1+2) + ... = 14
+  rdd.fold(1, lambda x, y: x+y)
+  ```
+
+#### GroupBy
+```python
+rdd = sc.parallelize([1,1,2,3,5,8])
+rdd.groupBy(lambda x: x % 2).collect()
+sorted([(x, sorted(y)) for (x,y) in result])
+# [(0, [2, 8]), (1, [1, 1, 3, 5])]
+```
+
+#### Aggregate
+- RDD의 데이터 타입과, Action 결과 타입이 다를 경우 사용
+- 파티션 단위의 **연산 결과**를 합치는 과정
+  ```python
+  RDD.aggregate(zeroValue, seqOp, combOp)
+  # zeroValue: 각 파티션에서 누적할 시작 값
+  # seqOp: 타입 변경 함수
+  # combOp: 함치는 함수
+
+  seqOp = (lambda x, y: (x[0] + y, x[1] + 1))
+  combOp = (lambda x, y: (x[0] + y[0], x[1] + y[1]))
+  sc.parallelize([1,2,3,4]).aggregate((0, 0), seqOp, combOp)
+  # (10, 4)
+  sc.parallelize([]).aggregate((0, 0), seqOp, combOp)
+  # (0, 0)
+  ```
+  - 실상 `SeqOp`의 결과는 무시되는 것으로 보임
+- KeyValueRDD
+  - `groupByKey`, `reduceByKey`
