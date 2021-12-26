@@ -200,3 +200,79 @@ sorted([(x, sorted(y)) for (x,y) in result])
   - 실상 `SeqOp`의 결과는 무시되는 것으로 보임
 - KeyValueRDD
   - `groupByKey`, `reduceByKey`
+
+## CH02_08. Key-Value RDD Operations & Joins
+- Transformations
+  - `groupByKey`
+    - 주어지는 `key`를 기준으로 `group`
+    - 함수 인자로 `partition`의 수를 지정할 수 있음
+  - `reduceByKey`
+    - `key`를 기준으로 그룹을 만들고 합침
+    - 함수 인자로 `partition` 수 지정 가능
+    - 개념적으로 `groupByKey` + reduction
+    - `groupByKey`보다 훨씬 빠름
+  - `mapValues`
+    - 함수를 `value`에게만 적용
+    - `parition`과 `key`는 그대로 유지
+      - `network cost`가 발생하지 않음
+  - `keys`
+    - 모든 `key`를 가진 `RDD`를 생성
+    - `transformation`에 유의
+  - `join`(+`leftOuterJoin`, `rightOuterJoin`)
+    - 여러개의 RDD를 합치는데 사용
+    - 대표적으로 두 가지의 Join방식이 존재
+      - Inner Join: 교집합
+      - Outer Join: 데이터가 없을 경우 `None`으로 채움
+        - `Full outer join`은 `union`과 유사 
+    - 예시 코드
+      ```python
+      rdd1 = sc.parallelize([("foo", 1), ("bar", 2), ("baz", 3)])
+      rdd2 = sc.parallelize([("foo", 4), ("bar", 5), ("bar", 6), ("zoo", 1)])
+
+      rdd1.join(rdd2).collect()
+      # [('bar', (2,5)), ('bar', (2,6)), ('foo', (1,4))]
+      rdd1.leftOuterJoin(rdd2).collect()
+      # [('baz', (3, None)), ('bar', (2,5)), ('bar', (2,6)), ('foo', (1,4))]
+      rdd1.rightOuterJoin(rdd2).collect()
+      # [('bar', (2,5)), ('bar', (2,6)), ('zoo', (None,1)), ('foo', (1,4))]
+      ```
+- Actions
+  - `countByKey`
+    - 각 `key`가 가진 요소들을 센다
+
+## CH02_09. Shuffling & Partitioning
+- `grouping`시 데이터를 한 노드에서 다른 노드로 옮길때
+  - 성능을 많이 저하시킴
+- `groupByKey`를 할때, 전체 shuffle이 발생함
+  - 여러 노드에서 전체 데이터를 주고 받게 됨
+- shuffle을 발생시킬 수 있는 작업
+  - Join, leftOuterJoin, rightOuterJoin
+  - GroupbyKey
+  - ReduceByKey
+  - CombineByKey
+  - Distinct
+  - Intersection
+  - Repartition
+  - Coalesce
+- Shuffle은
+  - 결과로 나오는 `RDD`가 원본 `RDD`의 다른 요소를 참조하거나
+  - 다른 `RDD`를 참조할 때 발생
+- 파티션을 이용한 최적화
+  - `GroupByKeys` + `Reduce`
+    - 여러번의 셔플이 일어남
+    - `Reduce`를 하기전에 `GroupBy`를 하기때문에 문제 발생
+  - `ReduceByKey`
+    - 각각의 파티션에서 `Reduce`를 우선 수행
+    - 이후 `Shuffle`
+- Shuffling을 최소화 하려면
+  - 미리 **파티션**을 만들어 두고 **캐싱**후, `reduceByKey`를 수행
+  - 미리 파티션을 만들어 두고 캐싱 이후 `join` 실행
+  - 둘다 `파티션`과 `캐싱`을 조합해서
+    - 최대한 **로컬 환경**에서 연산이 실행되도록 하는 방식
+      - 각각의 파티션에서 수행한다는 의미
+  - 셔플을 최소화 해서 `10배`의 성능 향상 가능
+- 데이터가 어느 노드, 파티션에 들어가는지 결정되는 방법
+  - 데이터를 최대한 **균등**하게 퍼트리고
+  - 쿼리가 같이 실행되는 **데이터**를 최대한 가까이 두어
+    - **검색 성능**을 향상 시킴
+  - 파티션은 `PairedRDD`일때 의미가 있음
