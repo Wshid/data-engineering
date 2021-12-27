@@ -276,3 +276,56 @@ sorted([(x, sorted(y)) for (x,y) in result])
   - 쿼리가 같이 실행되는 **데이터**를 최대한 가까이 두어
     - **검색 성능**을 향상 시킴
   - 파티션은 `PairedRDD`일때 의미가 있음
+- 파티션의 특징
+  - RDD는 쪼개져서 여러 파티션에 저장
+  - 하나의 파티션은 **하나의 노드**(서버)에
+  - 하나의 노드는 **여러개의 파티션**을 가질 수 있음
+  - 파티션의 크기와 배치는 `자유롭게 설정 가능`하며, **성능에 큰영향**
+  - `Key-Value RDD`를 사용할때만 의미가 있음
+  - **스파크의 파티셔닝**
+    - 일반 프로그래밍에서 **자료구조**를 선택하는 것
+- 파티셔닝의 종류
+  - Hash Partitioning
+    - 데이터를 여러 파티션에 **균일**하게 분배하는 방식
+    - hash function을 사용
+    - hash function을 잘못 선택하게 된다면, 한쪽 파티션만 사용하는 경우도 생김(skew)
+    - data set과 hash function을 잘 선택하는 것이 중요
+  - Range Partitioning
+    - **순서**가 있는, **정렬**된 파티셔닝
+    - `key`의 순서에 따라
+    - `key`의 집합 순서에 따라
+    - 서비스의 쿼리 패턴이 **날짜 위주**면
+      - 일별 `Range Partition`고려
+- 디스크에서 파티션하기
+  - `partitionBy()`
+    - 사용자가 **지정한 파티션**을 가지는 `RDD`를 생성하는 함수
+      ```python
+      # partition의 수를 지정
+      # glom으로 파티션의 형상을 확인 가능
+      pairs.partitionBy(2).glom().collect()
+      # [[(2,2), (4,4), (2,2)], [(1,1), (3,3), (1,1)]]
+
+      # hash function을 같이 인자로 넘김
+      pairs.partitionBy(2, lambda x: x%2).glom().collect()
+      ```
+    - 파티션을 만든 이후에 `persist()`하지 않으면,
+      - 다음 연산이 불릴때마다 **반복**하게 됨(**셔플링**이 반복적으로 일어남)
+- 메모리에서 파티션하기
+  - `repartition()`, `coalesce()`
+    - 파티션의 갯수를 조절하는데 사용
+    - `Repartition`: 파티션의 크기를 줄이거나 늘릴때 사용
+    - `Coalesce`: 파티션의 크기를 줄이는데 사용
+      - 파티션의 크기를 줄일때 `repartition`보다 `coalesce`를 사용하면 성능상 도움이 됨
+- 연산중 새로운 파티션이 만들어지는 함수
+  - `Join`
+  - `groupByKey`
+  - `reduceByKey`
+  - `forldByKey`
+  - `partitionBy`
+  - `Sort`
+  - `mapValues`(**parent**): 위 RDD에서 파티션이 전이가 되어있다면 그대로 사용
+  - `flatMapValues`(**parent**)
+  - `filter`(parent)
+  - etc..
+- `map`, `flatMap`은 `key`의 변형이 일어남
+  - `key`의 변경이 없다면 `mapValues`, `flatMapValues`를 사용하는것이 더 도움이 됨
