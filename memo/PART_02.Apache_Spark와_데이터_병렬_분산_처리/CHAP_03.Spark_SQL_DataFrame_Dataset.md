@@ -77,3 +77,64 @@
 - `DataSet`
   - **Type이 있는 DataFrame**
   - **Pyspark에서는 크게 신경쓰지 않아도 됨**
+
+## CH03_03. SQL 기초
+- X
+
+## CH03_04. DataFrame
+- DataFrame의 사용법
+  - DataFrame의 데이터 타입
+  - DataFrame에서 가능한 연산들
+  - DataFrame에서의 Aggregation 작업
+- DataFrame
+  - 관계형 데이터셋: RDD + Relation
+  - RDD가 **함수형 API**라면
+  - DataFrame은 **선언형 API**
+  - 자동으로 최적화가 가능
+  - 타입이 없음
+- DataFrame: RDD의 확장판
+  - Lazy Execution
+  - 분산 저장
+  - Immutable
+  - Row 객체 존재
+  - SQL 쿼리를 실행할 수 있음
+  - 스키마를 가질 수 있고
+    - 이를 통해 성능을 더 최적화 할 수 있음
+  - `csv, json, hive`등으로 읽어오거나 변환 가능
+- methods
+  - dtypes: 내부 변수의 스키마 파악 가능
+  - `show()`
+  - printSchema()
+- 복잡한 데이터 타입
+  - `ArrayType, MapType, StructType`
+
+### 주요 메서드
+- `select`
+  ```python
+  df.select(*).collect()
+  df.select('name', 'age').collect()
+  df.select(df.name, (df.age + 10).alias('age')).collect()
+  ```
+- `agg`: 그룹핑 후 데이터를 하나로 합치는 작업
+  ```python
+  df.agg({'age': 'max'}).collect()
+  df.agg(F.min(df.age)).collect()
+
+  # currency, avg(price)를 column으로 하는 df 생성
+  df.groupBy("currency").agg(avg("price")).show()
+  
+  # currency, count(price)를 column으로 하는 df 생성
+  df.groupBy("currency").agg(count("price")).show()
+  ```
+- `groupBy`: 사용자가 지정한 `Column`을 기준으로 데이터를 Grouping하는 작업
+  ```python
+  df.groupBy().avg().collect()
+  sorted(df.groupBy('name').agg({'age': 'mean'}).collect())
+  sorted(df.groupBy(df.name).avg().collect())
+  sorted(df.groupBy(['name', df.age]).count().collect())
+  ```
+- `join`
+  ```python
+  # 두 데이터 프레임에 해당하는 내용을 select 할 수 있음
+  df.join(df2, 'name').select(df.name, df2.height).collect()
+  ```
