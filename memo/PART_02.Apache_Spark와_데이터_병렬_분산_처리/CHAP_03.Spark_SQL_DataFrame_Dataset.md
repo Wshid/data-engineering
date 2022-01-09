@@ -138,3 +138,9 @@
   # 두 데이터 프레임에 해당하는 내용을 select 할 수 있음
   df.join(df2, 'name').select(df.name, df2.height).collect()
   ```
+
+## CH03_05. Spark SQL로 트립 수 세기
+- X
+
+## CH03_06. Spark SQL로 뉴욕의 각 행정구 별 데이터 추출하기
+- X
