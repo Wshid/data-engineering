@@ -138,9 +138,55 @@
   # 두 데이터 프레임에 해당하는 내용을 select 할 수 있음
   df.join(df2, 'name').select(df.name, df2.height).collect()
   ```
-
 ## CH03_05. Spark SQL로 트립 수 세기
 - X
 
 ## CH03_06. Spark SQL로 뉴욕의 각 행정구 별 데이터 추출하기
 - X
+
+## CH03_07. Catalyst Optimizer 및 Tungsten Project 작동원리
+- Spark는 쿼리를 돌리기 위해 두가지 엔진 사용
+  - Catalyst
+  - Tungsten
+- SQL/DataFrame -> **Catalyst**: Query Plan/Optimization -> **Tungsten**: RDD
+  - Catalyst
+    - 실행가능한 계획 수립
+    - **Logical Plan**을 **Physical Plan**으로 바꾸는 일
+- **Logical Plan**
+  - 수행해야하는 모든 transformation단계에 대한 추상화
+  - 데이터가 어떻게 변해야 하는지는 정의하지만
+  - 실제 어디서 어떻게 동작하는지 정의하지 않음
+- **Physical Plan**
+  - Logical Plan이 어떻게 클러스터 위에서 실행될지 정의
+  - 실행 전략을 만들고 Cost Model에 따라 최적화
+
+### Catalyst가 하는 일
+- **분석**
+  - DataFrame 객체의 relation을 계산, 컬럼의 타입과 이름 확인
+- **Logical Plan 최적화**
+  - 상수로 표현된 표현식을 Compile Time에 계산(Run time x)
+  - Predicate Pushdown: join & filter -> filter & join
+  - Projection Pruning: 연산에 필요한 컬럼만 가졍괴
+- **Physical Plan을 만들기**
+  - Spark에서 실행 가능한 Plan으로 변환
+- **코드 제너레이션**
+  - 최적화된 **Physical Plan**을 Java Bytecode로
+
+### explain 함수
+- 이 작업의 plan을 확인할 수 있음
+  ```python
+  spark.sql(query).explain(True)
+  ```
+  - Parsed Logical Plan
+  - Analysed Logical Plan
+  - Optimized Logical Plan
+  - Physical Plan: `false`시 해당 내용만 출력
+
+### Tungsten Project
+- Physical Plan이 선택되고 나면
+  - 분산 환경에서 실행될 Bytecode가 만들어짐
+  - 이 프로세스를 **Code Generation**이라고 부름
+- Spark Engine의 성능 향상이 목적
+  - **메모리 관리 최적화**
+  - **캐시 활용 연산**
+  - **코드 생성**
