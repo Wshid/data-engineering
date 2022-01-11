@@ -190,3 +190,6 @@
   - **메모리 관리 최적화**
   - **캐시 활용 연산**
   - **코드 생성**
+
+## CH03_08. User Defined Functions
+- SQL문 안에서 사용할 수 있는 Function
