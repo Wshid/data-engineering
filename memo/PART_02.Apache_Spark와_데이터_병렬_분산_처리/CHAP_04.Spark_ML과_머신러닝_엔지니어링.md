@@ -81,4 +81,9 @@
 - 아래 `stage`들이 하나의 파이프 라인을 이룸
   - 데이터 로딩 -> 전처리 -> 학습 -> 모델 평가
   - Transformer -> Transformer -> Estimator -> Evaluator = Model 
+
 #### Parameter
+- X
+
+## CH04_02. 첫 파이프라인 구축
+- X
