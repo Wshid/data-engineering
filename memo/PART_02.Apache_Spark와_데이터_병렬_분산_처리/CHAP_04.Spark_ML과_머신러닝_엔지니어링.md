@@ -87,3 +87,34 @@
 
 ## CH04_02. 첫 파이프라인 구축
 - X
+
+## CH04_03. 추천 알고리즘
+- ALS: Alternating Least Squares
+  - 왔다갔다 하면서, 제곱된 숫자를 최적화
+- 협업 필터링
+  - User A가 본 영화에만 스코어링
+  - User B가 본 영와헤만 스코어링
+  - A가 보지않고, B가 본 영화에 따라
+    - A에게 영화 추천
+- `Rating Matrix = User matrix * Item Matrix`
+  - 두 행렬중 하나를 고정시키고, 최적화
+  - 몇개의 과정이 순차적으로 실행되면서 User matrix, Item matrix를 찾아가는 과정
+- 과정
+  - Item matrix, user Matrix는 랜덤한 값으로 채워짐
+  - Item 행렬 고정, user 최적화
+    - item * user = rating에 유사하게 최적화
+  - User 행렬 고정, item 최적화
+  - 여러번 반복하게 되어 만들어진 matrix는
+    - origin rating matrix와 달리 빈 값들이 모두 채워진 상황(예측값)
+    - 그에 따라 추천 결과를 도출
+
+## CH04_04. 영화 추천 파이프라인 구축
+- X
+
+## CH04_05. Regression & Classification
+- 지도 학습(supervised learning)
+- Regression: 실수
+- Classification: 클래스(카테고리)
+- Linear Regression
+  - 데이터 분포에 맞게 선을 긋는 상황
+  - RMSE를 가지고 최적화
