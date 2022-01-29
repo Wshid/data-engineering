@@ -43,3 +43,6 @@
   - `Map, FlatMap, Filter, ReduceByKey, ...`
 - 이전 데이터에 대한 정보를 `State`로 주고 받을 수 있음
   - 카테고리별(**키값 별**) 총합
+
+## CH05_02. 간단한 스트리밍 구현
+- streaming.py 참고
