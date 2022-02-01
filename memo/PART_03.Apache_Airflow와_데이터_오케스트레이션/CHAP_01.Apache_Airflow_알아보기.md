@@ -68,3 +68,54 @@
 - 분석
 - 실험
 - 데이터 인프라 관리
+
+## CH01_02. AirFlow의 구조
+
+### One-node Architecture
+- Web Server
+- Scheduler
+- Metastore
+- Executor
+  - Queue가 존재
+- 구동 순서
+  - Web Server와 Scheduler가 Metastore에서 정보를 읽어옴
+  - Executor로 해당 정보를 보내어 task 실행
+  - DAG의 task의 상태는 Metastore로 업데이트
+  - 업데이트된 상태를 Web Server와 Scheduler가 읽어들임
+    - task가 잘 완료되었는지 확인
+
+### Multi-node Architecture
+- Queue가 Executor 바깥에 존재
+  - Queue = Celery Broker
+
+### 정리
+- DAG를 작성하여 **Workflow**를 만듦
+  - DAG는 **Task**로 구성됨
+- Task는 Operator가 인스턴스화 된 것
+- DAG를 실행시킬 때, Scheduler는 **DagRun** 오브젝트 생성
+  - `Dag의 인스턴스 = Dag 오브젝트`
+- DagRun 오브젝트는 Task Instance를 만듦
+- Worker가 Task를 수행 후 DagRun의 상태를 **완료**로 바꿈
+
+## CH01_03. Airflow 설치
+
+### airflow 설치
+```bash
+pip --version
+pip install apache-airflow
+# airflow는 내부 웹서버를 Flask 사용
+```
+- 설치 완료시 `~`에 `airflow`가 생성됨
+
+### airflow 초기화 및 admin 생성
+```bash
+# airflow 초기화 과정
+airflow db init
+airflow webserver -p 8080
+
+# 신규 사용자 생성
+airflow users create --role Admin --username admin --email admin --firstname admin --lastname admin --password admin
+```
+
+### 구동 완료 화면
+- ![image](https://user-images.githubusercontent.com/10006290/151902642-99ebdb3e-9223-4151-abb8-0d8358a8cba0.png)
