@@ -119,3 +119,61 @@ airflow users create --role Admin --username admin --email admin --firstname adm
 
 ### 구동 완료 화면
 - ![image](https://user-images.githubusercontent.com/10006290/151902642-99ebdb3e-9223-4151-abb8-0d8358a8cba0.png)
+
+## CH01_04. Airflow CLI
+```bash
+airflow -h
+# Groups: 여러가지 bundling된 커맨드 집합
+# Commands: 단일 커맨드
+
+airflow webserver
+
+airflow users list
+airflow users create -u admin2 -p admin2 -f Wshid -l Kkim -r Admin -e admin2@admin.com
+airflow scheduler
+
+airflow db
+
+airflow dags list
+
+airflow tasks -h
+airflow tasks list example_xcom
+
+# task trigger
+airflow dags trigger -h
+airflow dags trigger -e 2022-02-02 example_xcom
+```
+
+## CH01_05. Airflow UI
+- DAG의 `tag`를 붙여 관리 가능
+- ![image](https://user-images.githubusercontent.com/10006290/151923030-b2925c2b-8371-4c66-8fe4-1dd0b4731601.png)
+- `Recent Tasks`의 상태중
+  - `upstream_failed`: 의존성이 있는 이전 task에서 실패
+- `Actions`
+  - 휴지통 버튼을 누르게 되면, DAG의 인스턴스를 제거
+- `Link`에 마우스오버시 다음과 같은 여러 동작 가능
+  - ![image](https://user-images.githubusercontent.com/10006290/151923355-6901e92c-39a2-4ef6-925e-d822dfa52c2e.png)
+- DAG의 뷰
+  - ![image](https://user-images.githubusercontent.com/10006290/151923437-c9fe56a7-9011-485d-8a74-d258bd30bf77.png)
+  - `Tree`
+    - 각 노드가 task를 의미하며
+    - 우측에 색으로 task의 상태 확인 가능
+  - `Graph`
+    - task의 의존성을 확인할 수 있음
+    - task를 누르면 `modal`확인 가능
+      - ![image](https://user-images.githubusercontent.com/10006290/151923755-3d1e5491-eb7d-4ea3-9b03-bf0ede24dfca.png)
+      - task 상세 컨트롤 가능
+        - `clear - run`: 데이터를 제거하고 실행
+      - `mark failed`: 실패했다라고 표기 등
+      - 디버깅, 태스크 메뉴얼하게 컨트롤시 활용 가능
+      - 로그도 확인 가능
+        - ![image](https://user-images.githubusercontent.com/10006290/151923913-4fd7f986-58ea-47bd-af0b-e6c8f1c5c8cd.png)
+  - `Calendar`
+    - 날짜마다의 상태 확인
+  - `Gantt`
+    - 각 task가 얼마나 시간을 소비했는지 확인 가능
+    - ![image](https://user-images.githubusercontent.com/10006290/151923620-f541f285-e448-4998-a63f-f5806f37d938.png)
+    - 병목 및 parallel여부 등을 확인할 수 있음
+- `DAGs - Recent Tasks`를 클릭하여 태스크 상세 정보 확인 가능
+  - ![image](https://user-images.githubusercontent.com/10006290/151924122-38a29d72-96f1-485d-ad81-8473037f3d7f.png)
+  - ![image](https://user-images.githubusercontent.com/10006290/151924150-f05b5354-09c8-4553-b56e-5d5719f10d1b.png)
