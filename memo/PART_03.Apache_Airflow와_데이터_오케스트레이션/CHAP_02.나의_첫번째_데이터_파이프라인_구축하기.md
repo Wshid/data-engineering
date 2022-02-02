@@ -48,3 +48,27 @@ vi nft-pipeline
 - 외부 Provider
   - 다양하게 존재
   - 각 Provider가 Operator를 만들어줌
+
+## 02.04. Table 만들기
+- Admin - connection(sqlite connection id 추가)
+  - ![image](https://user-images.githubusercontent.com/10006290/152151139-fa843075-f967-4fad-a067-525f22a21536.png)
+- DAG 테스트 방법
+  ```bash
+  airflow tasks test nft-pipeline creating_table 2021-01-01
+  ```
+- sqlite
+  ```bash
+  sqlite3 airflow.db
+  .table # 전체 테이블 목록 확인
+  .schema nfts # 스키마 확인
+  ```
+
+## 02.05. Sensor로 API 확인하기
+- 코드상에 HttpSensor 추가
+- connection_id 설정
+  - DAG에 맞게 connection id를 동일하게 하여 아래와 같이 설정
+    - ![image](https://user-images.githubusercontent.com/10006290/152152338-96f5b1cd-eff8-4759-b410-b575ea6af583.png)
+- 테스트 방법
+  ```bash
+  airflow tasks test nft-pipeline is_api_available 2021-01-01
+  ```
