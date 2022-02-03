@@ -72,3 +72,30 @@ vi nft-pipeline
   ```bash
   airflow tasks test nft-pipeline is_api_available 2021-01-01
   ```
+
+## 02.06. HttpOperator로 데이터 불러오기
+```bash
+airflow tasks test nft-pipeline extract_nft 2021-01-01
+```
+
+## 02.07. PythonOperator로 데이터 처리하기
+```bash
+airflow tasks test nft-pipeline process_nft 2021-01-01
+```
+
+## 02.08. BashOperator로 데이터 저장하기
+```bash
+airflow tasks test nft-pipeline store_nft 2021-01-01
+```
+
+## 02.09. 테스크간 의존성 만들기
+```bash
+creating_table >> is_api_available
+```
+- ![image](https://user-images.githubusercontent.com/10006290/152346110-57295282-3e84-4337-9679-22d15a9e4c67.png)
+```bash
+creating_table >> is_api_available >> extract_nft >> process_nft >> store_nft
+```
+- ![image](https://user-images.githubusercontent.com/10006290/152346482-632c0daf-48e4-471b-add1-d094fe9fc3e2.png)
+- Failed task 발생시, modal내에서 log를 확인할 수 있음
+  - ![image](https://user-images.githubusercontent.com/10006290/152346558-b23bfaab-b9bd-40c1-85ba-68a478d1e33e.png)
