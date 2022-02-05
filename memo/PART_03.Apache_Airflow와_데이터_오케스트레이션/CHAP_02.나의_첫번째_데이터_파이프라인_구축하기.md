@@ -86,7 +86,7 @@ airflow tasks test nft-pipeline process_nft 2021-01-01
 ## 02.08. BashOperator로 데이터 저장하기
 ```bash
 airflow tasks test nft-pipeline store_nft 2021-01-01
-```
+``` 
 
 ## 02.09. 테스크간 의존성 만들기
 ```bash
@@ -99,3 +99,21 @@ creating_table >> is_api_available >> extract_nft >> process_nft >> store_nft
 - ![image](https://user-images.githubusercontent.com/10006290/152346482-632c0daf-48e4-471b-add1-d094fe9fc3e2.png)
 - Failed task 발생시, modal내에서 log를 확인할 수 있음
   - ![image](https://user-images.githubusercontent.com/10006290/152346558-b23bfaab-b9bd-40c1-85ba-68a478d1e33e.png)
+
+## 02.10. Backfill
+- 어떤 파이프라인이 망가졌을때,
+  - 망가지기 전 시점으로 돌아가 처음부터 다시 구동
+- 매일 주기적으로 돌아가는 파이프라인을 멈췄다가 몇일 뒤 실행시키면 어떻게 될까?
+  - 1/1, 1/2(중단), 1/3, 1/4(재구동)
+- `catchup`
+  - 1/4에 수행하더라도, 1/2, 1/3에 중단된 내용도 같이 실행
+  ```python
+  with DAG(dag_id='nft-pipeline', 
+        schedule_interval='@daily', 
+        default_args=default_args, 
+        tags=['nft'], 
+        # 특정 과거 시점부터 동작할 수 있도록 catchup=True로 변경
+        catchup=True) as dag:
+  ```
+  - 단, `catchup=True`라도, 이전에 구동된 DAG가 있다면, 그 지점부터 수행하게 됨
+- UI를 통해 단순히 컨트롤 가능

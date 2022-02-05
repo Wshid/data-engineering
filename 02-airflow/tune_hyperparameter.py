@@ -13,7 +13,7 @@ spark = SparkSession.builder.appName("taxi-fare-prediciton")\
                 .config("spark.driver.memory", MAX_MEMORY)\
                 .getOrCreate()
 
-data_dir = "/Users/keon/fastcampus/data-engineering/02-airflow/data/"
+data_dir = "/Users/sion/Workspace/data-engineering/02-airflow/data/"
 
 train_df = spark.read.parquet(f"{data_dir}/train/")
 

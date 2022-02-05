@@ -6,7 +6,7 @@ spark = SparkSession.builder.appName("taxi-fare-prediciton")\
                 .config("spark.driver.memory", MAX_MEMORY)\
                 .getOrCreate()
 
-trip_files = "/Users/keon/fastcampus/data-engineering/02-airflow/data/trips/*"
+trip_files = "/Users/sion/Workspace/data-engineering/02-airflow/data/trips/*"
 trips_df = spark.read.csv(f"file:///{trip_files}", inferSchema=True, header=True)
 
 trips_df.createOrReplaceTempView("trips")
@@ -33,6 +33,6 @@ WHERE
 data_df = spark.sql(query)
 
 train_df, test_df = data_df.randomSplit([0.8, 0.2], seed=1)
-data_dir = "/Users/keon/fastcampus/data-engineering/02-airflow/data/"
+data_dir = "/Users/sion/Workspace/data-engineering/02-airflow/data/"
 train_df.write.format("parquet").mode('overwrite').save(f"{data_dir}/train/")
 test_df.write.format("parquet").mode('overwrite').save(f"{data_dir}/test/")

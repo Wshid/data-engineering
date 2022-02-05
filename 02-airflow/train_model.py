@@ -15,7 +15,7 @@ spark = SparkSession.builder.appName("taxi-fare-prediciton")\
                 .config("spark.driver.memory", MAX_MEMORY)\
                 .getOrCreate()
 
-data_dir = "/Users/keon/fastcampus/data-engineering/02-airflow/data/"
+data_dir = "/Users/sion/Workspace/data-engineering/02-airflow/data/"
 train_df = spark.read.parquet(f"{data_dir}/train/")
 test_df = spark.read.parquet(f"{data_dir}/test/")
 
@@ -75,5 +75,5 @@ predictions = model.transform(vtest_df)
 predictions.cache()
 predictions.select(["trip_distance", "day_of_week", "total_amount", "prediction"]).show()
 
-model_dir = "/Users/keon/fastcampus/data-engineering/02-airflow/data/model"
+model_dir = "/Users/sion/Workspace/data-engineering/02-airflow/data/model"
 model.write().overwrite().save(model_dir)

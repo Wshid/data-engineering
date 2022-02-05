@@ -3,7 +3,7 @@ from pyspark.sql import SparkSession
 
 spark = SparkSession.builder.appName("uber-date-trips-sql").getOrCreate()
 
-directory = "/Users/keon/fastcampus/data-engineering/01-spark/data"
+directory = "/Users/sion/Workspace/data-engineering/01-spark/data"
 filename = "fhvhv_tripdata_2020-03.csv"
 
 data = spark.read.csv(f"file:///{directory}/{filename}", inferSchema = True, header = True)
