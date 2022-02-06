@@ -80,3 +80,53 @@
 - 각 브로커는 복제된 파티션 중 대표를 하는 **파티션 리더**를 가짐
 - 모든 Read/Write는 파티션 리더를 통해 이루어짐
 - 다른 파티션들은 **파티션 리더**를 복제
+
+## CH01_05. Producer
+- Message -> Topic
+- 카프카 토픽으로 메세지를 게시(post)하는 클라이언트 어플리케이션
+- 메세지를 어느 파티션에 넣을지 결정(key)
+- Client Application
+- 메세지를 어느 파티션으로 보낼지 결정
+- **Partition Key**를 지정하지 않으면 **Round Robin 방식**으로 각 파티션에 메세지를 분배
+- Partition Key를 지정하면, 같은 키를 가진 메세지가 같은 파티션에 들어감
+
+## CH01_06. Consumer
+- 각 Consumer group은 모든 파티션으로부터 데이터를 받을 수 있음
+- Consumer는 지정된 파티션으로부터 데이터를 받을 수 있음
+- Consumer Rebalancing
+- Client Application
+- **Consumer**와 **Consumer Group**이 존재
+- Consumer Group을 지정하지 않으면 새로운 **Consumer Group**에 배정
+- Consuemr Group안의 두 Consumer는 **같은 파티션으로부터 동시에 메세지를 받을 수 없음**
+- Consumer가 제거되거나 추가될 때 rebalancing이 이루어짐
+
+## CH01_07. Zookeeper
+- Consumer와 통신
+- 메타 데이터 정보 저장
+- 카프카 상태관리
+- 분산 시스템간의 정보 공유, 상태 체크, 서버들간의 동기화
+- 분산 시스템의 일부이기 때문에 동작을 멈춘다면 분산 시스템에 영향
+- 주키퍼 역시 클러스터로 구성
+- 클러스터는 **홀수**로 구성되어
+  - 문제가 생겼을 경우
+  - **과반수**가 가진 데이터를 기준으로 **일관성** 유지
+  
+### 주키퍼의 역할
+- **클러스터 관리**
+  - 클러스터에 존재하는 브로커를 관리하고 모니터링
+- **Topic 관리**
+  - 토픽 리스트를 관리
+  - 토픽에 할당된 파티션과 Replication 관리
+- **파티션 리더 관리**
+  - 파티션의 리더가 될 브로커를 선택하고
+  - 리더가 다운될 경우, 다음 리더를 선택
+- **브로커들끼리 서로를 발견할 수 있도록 정보 전달**
+
+## CH01_08. 카프카 설치
+```bash
+wget https://dlcdn.apache.org/kafka/3.1.0/kafka_2.13-3.1.0.tgz
+tar -xzvf https://dlcdn.apache.org/kafka/3.1.0/kafka_2.13-3.1.0.tgz
+mv kafka_2.13-3.1.0 /Users/sion/apps/.
+cd /Users/sion/apps
+ln -s kafka_2.13-3.1.0 kafka
+```
